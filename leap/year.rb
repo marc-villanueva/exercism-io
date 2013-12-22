@@ -6,12 +6,12 @@ class Year
   end
 
   def leap?
-    divisible_by?(4) && !century_to_skip?
+    divisible_by?(4) && !century_without_leap_day?
   end
 
   private
 
-  def century_to_skip?
+  def century_without_leap_day?
     divisible_by?(100) && !divisible_by?(400)
   end
 
