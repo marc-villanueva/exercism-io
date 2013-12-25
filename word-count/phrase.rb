@@ -20,30 +20,19 @@ class WordCounter
       counter.add_word(word)
     end
 
-    counter.count
+    counter.word_count
   end
 
   def initialize
-    @words = {}
+    @words = Hash.new { |hash, key| hash[key] = 0 }
   end
 
   def add_word(word)
-    add_or_increment_word_count(word)
+    word_count[word] += 1
   end
 
-  def count
+  def word_count
     @words
-  end
-  alias_method :words, :count
-
-  private
-
-  def add_or_increment_word_count(word)
-    if words.has_key?(word)
-      words[word] = words[word] + 1
-    else
-      words[word] = 1
-    end
   end
 end
 
