@@ -1,3 +1,5 @@
+require 'forwardable'
+
 class Proverb
   attr_reader :nouns, :qualifier
 
@@ -7,21 +9,20 @@ class Proverb
   end
 
   def to_s
-    lines = []
-    0.upto(nouns.length - 1) do |i|
-      lines << line(i)
+    proverb = []
+    cause_effects = CauseEffect.new(nouns)
+    cause_effects.each do |cause_effect|
+      proverb << consquence_line(cause_effect[:cause], cause_effect[:effect])
     end
-    lines.join("\n")
+
+    proverb << original_cause
+    proverb.join("\n")
   end
 
   private
 
-  def line(line_number)
-    if line_number < nouns.length - 1
-      consquence_line(nouns[line_number], nouns[line_number + 1])
-    else
-      original_cause
-    end
+  def nouns
+    @nouns
   end
 
   def consquence_line(want, lost)
@@ -35,4 +36,30 @@ class Proverb
   def qualified_noun(noun)
     "#{qualifier} #{noun}".strip
   end
+end
+
+class CauseEffect
+  extend Forwardable
+
+  def_delegators :pairs, :each
+
+  def initialize(*chain_of_events)
+    @pairs = []
+    create_pairs(*chain_of_events)
+  end
+
+  private
+
+  def pairs
+    @pairs
+  end
+
+  def create_pairs(chain_of_events)
+    index = 0
+    while index < chain_of_events.length - 1
+      pairs << {cause: chain_of_events[index], effect: chain_of_events[index + 1]}
+      index += 1
+    end
+  end
+
 end
