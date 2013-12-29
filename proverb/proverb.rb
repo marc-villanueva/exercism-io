@@ -10,9 +10,9 @@ class Proverb
 
   def to_s
     proverb = []
-    cause_effects = CauseEffect.new(nouns)
-    cause_effects.each do |cause_effect|
-      proverb << consquence_line(cause_effect[:cause], cause_effect[:effect])
+
+    CauseEffect.from_chain(nouns).each do |cause_effect|
+      proverb << consquence_line(cause_effect)
     end
 
     proverb << original_cause
@@ -25,8 +25,8 @@ class Proverb
     @nouns
   end
 
-  def consquence_line(want, lost)
-    "For want of a #{want} the #{lost} was lost."
+  def consquence_line(cause_effect)
+    "For want of a #{cause_effect.cause} the #{cause_effect.effect} was lost."
   end
 
   def original_cause
@@ -39,27 +39,18 @@ class Proverb
 end
 
 class CauseEffect
-  extend Forwardable
+  attr_reader :cause, :effect
 
-  def_delegators :pairs, :each
-
-  def initialize(*chain_of_events)
-    @pairs = []
-    create_pairs(*chain_of_events)
-  end
-
-  private
-
-  def pairs
-    @pairs
-  end
-
-  def create_pairs(chain_of_events)
-    index = 0
-    while index < chain_of_events.length - 1
-      pairs << {cause: chain_of_events[index], effect: chain_of_events[index + 1]}
-      index += 1
+  def self.from_chain(chain)
+    cause_effects = []
+    0.upto(chain.length - 2).each do |i|
+      cause_effects << CauseEffect.new(chain[i], chain[i+1])
     end
+    cause_effects
   end
 
+  def initialize(cause, effect)
+    @cause = cause
+    @effect = effect
+  end
 end
