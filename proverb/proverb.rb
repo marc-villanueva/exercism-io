@@ -1,5 +1,3 @@
-require 'forwardable'
-
 class Proverb
   attr_reader :objects_of_desire, :qualifier
 
