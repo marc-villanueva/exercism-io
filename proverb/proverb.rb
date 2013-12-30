@@ -1,56 +1,76 @@
 require 'forwardable'
 
 class Proverb
-  attr_reader :nouns, :qualifier
+  attr_reader :objects_of_desire, :qualifier
 
-  def initialize(*nouns, qualifier: "")
-    @nouns = nouns
+  def initialize(*objects_of_desire, qualifier: "")
+    @objects_of_desire = objects_of_desire
     @qualifier = qualifier
   end
 
   def to_s
-    proverb = []
-
-    CauseEffect.from_chain(nouns).each do |cause_effect|
-      proverb << consquence_line(cause_effect)
+    lines = []
+    consequences = Consequence.from_list(objects_of_desire)
+    consequences.each do |consequence|
+      lines << consequence.to_s
     end
 
-    proverb << original_cause
-    proverb.join("\n")
+    lines << RootCause.new(objects_of_desire.first, qualifier).to_s
+    lines.join("\n")
   end
 
   private
 
-  def nouns
-    @nouns
-  end
-
-  def consquence_line(cause_effect)
-    "For want of a #{cause_effect.cause} the #{cause_effect.effect} was lost."
-  end
-
-  def original_cause
-    "And all for the want of a #{qualified_noun(nouns.first)}."
-  end
-
-  def qualified_noun(noun)
-    "#{qualifier} #{noun}".strip
+  def objects_of_desire
+    @objects_of_desire
   end
 end
 
-class CauseEffect
-  attr_reader :cause, :effect
+class RootCause
+  attr_reader :object_of_desire, :qualifier
 
-  def self.from_chain(chain)
-    cause_effects = []
-    0.upto(chain.length - 2).each do |i|
-      cause_effects << CauseEffect.new(chain[i], chain[i+1])
-    end
-    cause_effects
+  def initialize object_of_desire, qualifier
+    @object_of_desire = object_of_desire
+    @qualifier = qualifier
   end
 
-  def initialize(cause, effect)
-    @cause = cause
-    @effect = effect
+  def to_s
+    "And all for the want of a #{qualified_object}."
+  end
+
+  private
+
+  def qualified_object
+    "#{qualifier} #{object_of_desire}".strip
+  end
+end
+
+class Consequence
+  def self.from_list(objects)
+    consequences = []
+
+    0.upto(objects.length - 2).each do |i|
+      consequences << self.new(objects[i], objects[i + 1])
+    end
+    consequences
+  end
+
+  def initialize(wanted_object, lost_object)
+    @wanted_object = wanted_object
+    @lost_object = lost_object
+  end
+
+  def to_s
+     "For want of a #{wanted_object} the #{lost_object} was lost."
+  end
+
+  private
+
+  def wanted_object
+    @wanted_object
+  end
+
+  def lost_object
+    @lost_object
   end
 end
