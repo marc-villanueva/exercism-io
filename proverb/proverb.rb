@@ -7,9 +7,8 @@ class Proverb
   end
 
   def to_s
-    lines = []
-    chain_of_events.each do |chain|
-      lines << consequence(chain[:want], chain[:lost])
+    lines = chain_of_events.collect do |chain|
+      consequence(chain[:want], chain[:lost])
     end
     lines << root_cause
     lines.join("\n")
@@ -18,11 +17,9 @@ class Proverb
   private
 
   def chain_of_events
-    chain = []
-    0.upto(objects_of_desire.length - 2).each do |i|
-      chain << {want: objects_of_desire[i], lost: objects_of_desire[i + 1]}
+    objects_of_desire.each_cons(2).map do |a, b|
+      {want: a, lost: b}
     end
-    chain
   end
 
   def consequence(wanted_object, lost_object)
