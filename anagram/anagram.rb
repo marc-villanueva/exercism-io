@@ -27,6 +27,6 @@ class Anagram
   end
 
   def normalize(word)
-    word.downcase.chars.sort.join
+    word.downcase.chars.sort
   end
 end
