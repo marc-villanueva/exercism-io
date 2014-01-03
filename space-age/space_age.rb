@@ -5,17 +5,11 @@ class SpaceAge
     @seconds = seconds
   end
 
-  private
-
-  def method_missing(method, *args, &block)
-    method = method.to_s
-    if method.start_with?('on_')
-      planet = method[3..-1]
-      calculator(planet).in_years
-    else
-      super
-    end
+  %w(mercury venus earth mars jupiter neptune uranus saturn).each do |planet|
+    define_method("on_#{planet}") { calculator(planet).in_years }
   end
+
+  private
 
   def calculator(planet)
     begin
