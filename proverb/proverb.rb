@@ -13,14 +13,8 @@ class Proverb
   private
 
   def chain_of_consequences
-    chain_of_objects.map do |chain|
-      consequence(chain[:want], chain[:lost])
-    end
-  end
-
-  def chain_of_objects
     objects_of_desire.each_cons(2).map do |wanted_object, lost_object|
-      {want: wanted_object, lost: lost_object}
+      consequence(wanted_object, lost_object)
     end
   end
 
