@@ -53,6 +53,6 @@ class Tokenizer
   end
 
   def tokens
-    text.scan(/[0-9a-z']+/i).map {|token| token.downcase}
+    text.scan(/[0-9a-z']+/i).map(&:downcase)
   end
 end
