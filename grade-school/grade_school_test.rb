@@ -57,4 +57,10 @@ class SchoolTest < MiniTest::Unit::TestCase
     assert_equal sorted, school.sort
     assert_equal [3, 4, 6], school.sort.keys
   end
+
+  def test_immutable_through_db
+    school.add("Jennifer", 4)
+    school.db[4] << "Voldemort"
+    assert_equal({4 => ["Jennifer"]}, school.db)
+  end
 end

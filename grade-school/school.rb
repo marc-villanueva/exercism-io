@@ -1,75 +1,33 @@
 class School
   def initialize
-    @repo = GradeRepo.new
+    @grades = Hash.new do |grades, grade_level|
+      grades[grade_level] = Grade.new(grade_level)
+    end
   end
 
-  def add(student, grade_number)
-    grade = repo.find_or_create(grade_number)
-    grade.add_student(student)
+  def add(student, grade_level)
+    grades[grade_level].add_student(student)
   end
 
-  def grade(grade_number)
-    repo.find_or_create(grade_number).students
+  def grade(grade_level)
+    grades[grade_level].students
   end
 
   def db
-    repo.to_hash
+    grades.values.each_with_object(Hash.new) do |grade, result|
+      result.merge!(grade.to_hash) unless grade.empty?
+    end
   end
 
   def sort
-    repo.sort.to_hash
+    grades.values.sort.each_with_object(Hash.new) do |grade, result|
+      result.merge!(grade.sort.to_hash) unless grade.empty?
+    end
   end
 
   private
 
-  def repo
-    @repo
-  end
-end
-
-class GradeRepo
-  def initialize(grades=nil)
-    @grades = grades || []
-  end
-
-  def find_or_create(number)
-    grade = grades.find {|g| g.level == number}
-    if grade.nil?
-      grade = Grade.new(number)
-      grades << grade
-    end
-
-    grade
-  end
-
-  def sort
-    GradeRepo.new(sorted_cloned_grades)
-  end
-
-  def sort!
-    @grades = grades.sort.map {|g| g.sort! }
-  end
-
-  def to_hash
-    hash = {}
-    grades.each do |grade|
-      hash.merge!(grade.to_hash) unless grade.empty?
-    end
-    hash
-  end
-
-  private
-
-  def grades
-    @grades
-  end
-
-  def sorted_cloned_grades
-    sorted_grades = Marshal.load( Marshal.dump( grades.sort ) )
-    sorted_grades.map do |g|
-      g.sort
-    end
-  end
+  attr_reader :grades
 end
 
 class Grade
@@ -105,7 +63,7 @@ class Grade
 
   def to_hash
     hash = {}
-    hash[level] = students
+    hash[level] = students.clone
     hash
   end
 end
