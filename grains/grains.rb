@@ -18,14 +18,10 @@ class Grains
   private
 
   def calculate_number_of_grains(number)
-    if number == 1
-      1
-    else
-      2 * calculate_number_of_grains(number - 1)
-    end
+    2 ** (number - 1)
   end
 
   def grain_calculation_cache
-    @grain_calculation_cache ||= Hash.new(nil)
+    @grain_calculation_cache ||= {}
   end
 end
