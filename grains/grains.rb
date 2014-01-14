@@ -6,22 +6,12 @@ class Grains
   end
 
   def square(number)
-    grain_calculation_cache[number] ||= calculate_number_of_grains(number)
+    2 ** (number - 1)
   end
 
   def total
     (1..total_number_of_squares).reduce(0) do |sum, square_number|
       sum + square(square_number)
     end
-  end
-
-  private
-
-  def calculate_number_of_grains(number)
-    2 ** (number - 1)
-  end
-
-  def grain_calculation_cache
-    @grain_calculation_cache ||= {}
   end
 end
