@@ -22,11 +22,9 @@ class ScrabbleScores
   end
 
   def to_hash
-    hash = {}
-    letters.each do |letter|
-      hash.update(letter.to_hash)
+    letters.each_with_object(Hash.new) do |letter, return_hash|
+      return_hash.update(letter.to_hash)
     end
-    hash
   end
 end
 
