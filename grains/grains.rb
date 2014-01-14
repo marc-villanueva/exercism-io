@@ -10,8 +10,6 @@ class Grains
   end
 
   def total
-    (1..total_number_of_squares).reduce(0) do |sum, square_number|
-      sum + square(square_number)
-    end
+    (1..total_number_of_squares).map(&method(:square)).reduce(:+)
   end
 end
