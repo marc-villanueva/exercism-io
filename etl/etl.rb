@@ -37,8 +37,6 @@ class ScrabbleLetter
   end
 
   def to_hash
-    hash = {}
-    hash[letter] = score
-    hash
+   {letter => score}
   end
 end
