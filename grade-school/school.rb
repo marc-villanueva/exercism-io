@@ -14,20 +14,27 @@ class School
   end
 
   def db
-    grades.values.each_with_object(Hash.new) do |grade, result|
-      result.merge!(grade.to_hash) unless grade.empty?
+    to_hash(grades.values) do |grade|
+      grade.to_hash
     end
   end
 
   def sort
-    grades.values.sort.each_with_object(Hash.new) do |grade, result|
-      result.merge!(grade.sort.to_hash) unless grade.empty?
+    to_hash(grades.values.sort) do |grade|
+      grade.sort.to_hash
     end
   end
 
   private
 
   attr_reader :grades
+
+  def to_hash(array_of_grades, &block)
+    array_of_grades.each_with_object(Hash.new) do |grade, result|
+      result.merge!(block.call(grade)) unless grade.empty?
+    end
+  end
+
 end
 
 class Grade
